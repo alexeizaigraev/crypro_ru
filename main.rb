@@ -20,18 +20,18 @@ class Crypto
     @flag_to_arhiv = mk_flag_to_arhiv
   end
 
-  def mk_flag_to_arhiv
+  def mk_flag_to_arhiv # определяет нужно ли шифровать
     @prefixes.each do |prefix|
       return false if 0 == @short_fname.index(prefix)
     end
     true
   end
 
-  def mk_gpg_command
+  def mk_gpg_command # строит команду шифрования
     "gpg --output out/#{@short_fname}.gpg --encrypt --recipient #{@mail1} --recipient #{@mail2} in/#{@short_fname}"
   end
 
-  def log_it
+  def log_it # логирует @txt
     File.open('logi.txt', 'a') do |file|
       file.puts "#{@txt} #{Time.now}"
     end
@@ -39,22 +39,22 @@ class Crypto
   end
 
   def main
-    if @flag_to_arhiv
-      @txt = "to_arhiv #{@short_fname}"
+    if @flag_to_arhiv # фрхивирует
+      @txt = "\nto_arhiv #{@short_fname}"
       log_it
-      comand = "mv #{@in_fname} #{@arhiv_fname}"
+      comand = "mv #{@in_fname} #{@arhiv_fname}" # команда архивирования
       begin
-        system(comand)
+        system(comand) # выполение архивирования
       rescue
-        z = nil
+        z = nil # при ошибке ничего не делает
       end
     else
-      system(@comand)
-      puts 'y'
-      puts "\n"
+      system(@comand) # выполение шифрования
+      puts 'y' # подтверждение на случай запроса
+      puts "\n" # перевод строки на всякий случай и для кроасоты вывода
       @txt = @comand
       log_it
-      File.delete(@in_fname)
+      File.delete(@in_fname) # удаление файла из входящих
     end
   end
 
